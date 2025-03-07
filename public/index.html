@@ -5,18 +5,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encryption App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            display: block;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result-box {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        .result-box strong {
+            color: #007bff;
+        }
+    </style>
 </head>
 
 <body>
-    <img src="logo.png" alt="App Logo" width="300px" height="100px">
-    <h1>Encryption App</h1>
 
-    <input type="text" id="message" placeholder="Enter message">
-    <button onclick="encryptMessage()">Encrypt</button>
-    <button onclick="decryptMessage()">Decrypt</button>
+    <div class="container">
+        <img src="logo.png" alt="App Logo" width="250px">
+        <h1>Encryption App</h1>
 
-    <p><strong>Encrypted:</strong> <span id="encryptedText"></span></p>
-    <p><strong>Decrypted:</strong> <span id="decryptedText"></span></p>
+        <textarea id="message" placeholder="Enter message" rows="4"></textarea>
+
+        <br>
+        <button onclick="encryptMessage()">Encrypt</button>
+        <button onclick="decryptMessage()">Decrypt</button>
+
+        <div class="result-box">
+            <strong>Encrypted:</strong>
+            <p id="encryptedText"></p>
+        </div>
+
+        <div class="result-box">
+            <strong>Decrypted:</strong>
+            <p id="decryptedText"></p>
+        </div>
+    </div>
 
     <script>
         const API_URL = "http://localhost:8080/api"; // Adjust if backend runs on a different port
@@ -24,29 +103,50 @@
         async function encryptMessage() {
             const message = document.getElementById("message").value;
 
-            const response = await fetch(API_URL + "/encrypt", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: message }) // Send message inside JSON object
-            });
+            if (!message.trim()) {
+                alert("Please enter a message to encrypt.");
+                return;
+            }
 
-            const encryptedData = await response.json(); // Expect JSON response
-            document.getElementById("encryptedText").innerText = encryptedData.encryptedText;
+            try {
+                const response = await fetch(API_URL + "/encrypt", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: message })
+                });
+
+                const encryptedData = await response.json();
+                document.getElementById("encryptedText").innerText = encryptedData.encryptedText || "Error encrypting message.";
+            } catch (error) {
+                console.error("Encryption error:", error);
+                document.getElementById("encryptedText").innerText = "Failed to encrypt message.";
+            }
         }
 
         async function decryptMessage() {
             const encryptedText = document.getElementById("encryptedText").innerText;
 
-            const response = await fetch(API_URL + "/decrypt", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: encryptedText }) // Send encrypted text inside JSON
-            });
+            if (!encryptedText.trim()) {
+                alert("No encrypted text available to decrypt.");
+                return;
+            }
 
-            const decryptedData = await response.json(); // Expect JSON response
-            document.getElementById("decryptedText").innerText = decryptedData.decryptedText;
+            try {
+                const response = await fetch(API_URL + "/decrypt", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: encryptedText })
+                });
+
+                const decryptedData = await response.json();
+                document.getElementById("decryptedText").innerText = decryptedData.decryptedText || "Error decrypting message.";
+            } catch (error) {
+                console.error("Decryption error:", error);
+                document.getElementById("decryptedText").innerText = "Failed to decrypt message.";
+            }
         }
     </script>
+
 </body>
 
 </html>
