@@ -84,12 +84,16 @@
 
         <br>
         <button onclick="encryptMessage()">Encrypt</button>
-        <button onclick="decryptMessage()">Decrypt</button>
+
 
         <div class="result-box">
             <strong>Encrypted:</strong>
             <p id="encryptedText"></p>
         </div>
+
+        <br>
+        <textarea id="cipherText" placeholder="Enter cipher text" rows="4"></textarea>
+        <button onclick="decryptMessage()">Decrypt</button>
 
         <div class="result-box">
             <strong>Decrypted:</strong>
@@ -125,7 +129,7 @@
 
         async function decryptMessage() {
             // const encryptedText = document.getElementById("encryptedText").innerText;
-            const encryptedText = document.getElementById("message").value;
+            const encryptedText = document.getElementById("cipherText").value;
 
             if (!encryptedText.trim()) {
                 alert("No encrypted text available to decrypt.");
