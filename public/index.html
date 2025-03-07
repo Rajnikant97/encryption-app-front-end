@@ -124,7 +124,8 @@
         }
 
         async function decryptMessage() {
-            const encryptedText = document.getElementById("encryptedText").innerText;
+            // const encryptedText = document.getElementById("encryptedText").innerText;
+            const encryptedText = document.getElementById("message").value;
 
             if (!encryptedText.trim()) {
                 alert("No encrypted text available to decrypt.");
@@ -135,7 +136,7 @@
                 const response = await fetch(API_URL + "/decrypt", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: encryptedText })
+                    body: JSON.stringify({ message: encryptedText.trim() })
                 });
 
                 const decryptedData = await response.json();
