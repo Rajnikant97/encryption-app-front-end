@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encryption App</title>
+</head>
+
+<body>
+    <div id="root"></div>
+    <h1>Encryption App</h1>
+
+    <input type="text" id="message" placeholder="Enter message">
+    <button onclick="encryptMessage()">Encrypt</button>
+    <button onclick="decryptMessage()">Decrypt</button>
+
+    <p><strong>Encrypted:</strong> <span id="encryptedText"></span></p>
+    <p><strong>Decrypted:</strong> <span id="decryptedText"></span></p>
+
+    <script>
+        const API_URL = "http://localhost:8080/api"; // Adjust if backend runs on a different port
+
+        async function encryptMessage() {
+            const message = document.getElementById("message").value;
+
+            const response = await fetch(API_URL + "/encrypt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message }) // Send message inside JSON object
+            });
+
+            const encryptedData = await response.json(); // Expect JSON response
+            document.getElementById("encryptedText").innerText = encryptedData.encryptedText;
+        }
+
+        async function decryptMessage() {
+            const encryptedText = document.getElementById("encryptedText").innerText;
+
+            const response = await fetch(API_URL + "/decrypt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: encryptedText }) // Send encrypted text inside JSON
+            });
+
+            const decryptedData = await response.json(); // Expect JSON response
+            document.getElementById("decryptedText").innerText = decryptedData.decryptedText;
+        }
+    </script>
+</body>
+
+</html>
